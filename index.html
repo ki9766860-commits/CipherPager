@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>النظام المتكامل - البيجر والمورس</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-glow: rgba(157, 78, 221, 0.5);
+            --secondary-glow: rgba(0, 198, 255, 0.5);
+            --glass-bg: rgba(255, 255, 255, 0.07);
+            --border-color: rgba(255, 255, 255, 0.18);
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            font-family: 'Cairo', sans-serif;
+            background: radial-gradient(circle at center, #1a1a2e 0%, #0f0f1a 100%);
+            min-height: 100vh;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            overflow-x: hidden;
+        }
+
+        body::before {
+            content: "";
+            position: absolute;
+            width: 300px;
+            height: 300px;
+            background: var(--primary-glow);
+            filter: blur(100px);
+            top: 10%;
+            left: 10%;
+            z-index: -1;
+        }
+
+        /* شاشة تسجيل الدخول */
+        .login-container {
+            background: rgba(15, 5, 25, 0.85);
+            backdrop-filter: blur(20px) saturate(180%);
+            -webkit-backdrop-filter: blur(20px) saturate(180%);
+            padding: 30px;
+            border-radius: 24px;
+            text-align: center;
+            color: #fff;
+            width: 90%;
+            max-width: 350px;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.8);
+            border: 1px solid var(--border-color);
+        }
+
+        .login-container h2 {
+            color: #9d4edd;
+            margin-bottom: 20px;
+            font-size: 1.8rem;
+        }
+
+        .login-container input {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            font-size: 16px;
+            text-align: center;
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            outline: none;
+            background: rgba(0, 0, 0, 0.25);
+            color: #fff;
+        }
+
+        .login-container input:focus {
+            border-color: #9d4edd;
+            box-shadow: 0 0 15px var(--primary-glow);
+        }
+
+        .login-container button {
+            width: 100%;
+            padding: 12px;
+            margin-top: 15px;
+            background: linear-gradient(135deg, #7b2cbf, #9d4edd);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .error-msg {
+            color: #ff4d4d;
+            margin-top: 15px;
+            font-size: 14px;
+            display: none;
+        }
+
+        /* الواجهة الرئيسية */
+        .main-container {
+            display: none;
+        }
+
+        .glass-container {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px) saturate(180%);
+            -webkit-backdrop-filter: blur(20px) saturate(180%);
+            border-radius: 24px;
+            padding: 30px;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.8);
+            border: 1px solid var(--border-color);
+        }
+
+        .tab-buttons {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 25px;
+        }
+
+        .tab-btn {
+            flex: 1;
+            padding: 12px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            color: #fff;
+            cursor: pointer;
+            font-family: 'Cairo';
+            font-weight: bold;
+            transition: 0.3s;
+        }
+
+        .tab-btn.active {
+            background: linear-gradient(135deg, #7b2cbf, #9d4edd);
+            border-color: #9d4edd;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        h1, h2 {
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: linear-gradient(to right, #fff, #b79ced);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        label {
+            display: block;
+            margin: 15px 5px 8px;
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: #d1d1d1;
+        }
+
+        textarea, .pager-input {
+            width: 100%;
+            height: 110px;
+            border-radius: 15px;
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.25);
+            border: 1px solid var(--border-color);
+            color: #fff;
+            font-size: 1.1rem;
+            resize: none;
+            box-sizing: border-box;
+            outline: none;
+            transition: 0.3s;
+        }
+
+        input.pager-input {
+            height: auto;
+        }
+
+        textarea:focus, input:focus {
+            border-color: #9d4edd;
+            box-shadow: 0 0 15px var(--primary-glow);
+        }
+
+        .button-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin: 25px 0;
+        }
+
+        button {
+            padding: 12px;
+            border-radius: 12px;
+            border: none;
+            font-size: 1rem;
+            font-weight: 700;
+            font-family: 'Cairo';
+            color: #fff;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .btn-primary { background: linear-gradient(135deg, #7b2cbf, #9d4edd); }
+        .btn-outline { background: transparent; border: 1px solid #9d4edd; color: #9d4edd; }
+        
+        button:hover { transform: translateY(-2px); opacity: 0.9; }
+        button:active { transform: translateY(0); }
+
+        .footer-section {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid var(--border-color);
+            flex-wrap: wrap;
+        }
+
+        .clear-btn { 
+            background: rgba(255, 65, 108, 0.1); 
+            color: #ff4d4d; 
+            border: 1px solid rgba(255, 65, 108, 0.3); 
+            padding: 8px 15px; 
+            font-size: 0.85rem;
+        }
+        .clear-btn:hover { background: #ff416c; color: #fff; }
+
+        .copy-btn {
+            background: rgba(0, 198, 255, 0.1);
+            color: #00c6ff;
+            border: 1px solid rgba(0, 198, 255, 0.3);
+            padding: 8px 15px;
+            font-size: 0.85rem;
+            flex-grow: 1;
+        }
+        .copy-btn:hover { background: #00c6ff; color: #fff; }
+
+        .status-badge { 
+            background: rgba(0, 255, 170, 0.1); 
+            color: #00ffaa; 
+            padding: 4px 12px; 
+            border-radius: 20px; 
+            font-size: 0.75rem; 
+            border: 1px solid rgba(0, 255, 170, 0.2);
+            min-width: 60px;
+            text-align: center;
+        }
+
+        .result-display {
+            background: rgba(0, 0, 0, 0.25);
+            border: 1px solid var(--border-color);
+            border-radius: 15px;
+            padding: 15px;
+            min-height: 60px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #22c55e;
+            word-break: break-all;
+            position: relative;
+        }
+
+        .copy-result-btn {
+            position: absolute;
+            left: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(0, 198, 255, 0.2);
+            border: none;
+            padding: 5px 10px;
+            font-size: 11px;
+        }
+
+        .logout-btn {
+            margin-top: 20px;
+            background: rgba(255, 68, 68, 0.3);
+            border: 1px solid #ff4444;
+            width: 100%;
+        }
+
+        .logout-btn:hover {
+            background: rgba(255, 68, 68, 0.6);
+        }
+    </style>
+</head>
+<body>
+
+<!-- شاشة تسجيل الدخول -->
+<div id="loginScreen" class="login-container">
+    <h2>🔐 تسجيل الدخول</h2>
+    <input type="text" id="loginUsername" placeholder="اسم المستخدم">
+    <input type="password" id="loginPassword" placeholder="كلمة المرور">
+    <button onclick="checkLogin()">دخول</button>
+    <div id="loginError" class="error-msg">❌ اسم المستخدم أو كلمة المرور غير صحيحة</div>
+</div>
+
+<!-- الواجهة الرئيسية -->
+<div id="mainApp" class="main-container">
+    <div class="glass-container">
+        <div class="tab-buttons">
+            <button class="tab-btn active" onclick="switchTab('pager')">📟 نظام البيجر</button>
+            <button class="tab-btn" onclick="switchTab('morse')">📡 مترجم مورس</button>
+        </div>
+
+        <!-- تبويب البيجر -->
+        <div id="pagerTab" class="tab-content active">
+            <h2>🔐 تشفير وفك شفرة البيجر</h2>
+            <div class="input-group">
+                <input id="pagerInput" class="pager-input" type="text" placeholder="هنا اكتب الشفرة او النص المراد تشفيره">
+            </div>
+            <div class="button-group">
+                <button onclick="pagerDecode()">🔓 فك الشفرة</button>
+                <button onclick="pagerEncode()">🔒 تشفير جملة</button>
+            </div>
+            <label>النتيجة:</label>
+            <div class="result-display" id="pagerResult">
+                ---
+                <button class="copy-result-btn" onclick="copyPagerResult()">📋 نسخ</button>
+            </div>
+        </div>
+
+        <!-- تبويب المورس -->
+        <div id="morseTab" class="tab-content">
+            <h2>📡 مترجم مورس</h2>
+            <textarea id="morseInput" placeholder="اكتب نصاً أو كود مورس هنا..."></textarea>
+            <div class="button-group">
+                <button onclick="convertToMorse()">➡ تحويل لمورس</button>
+                <button onclick="decodeMorse()">⬅ فك التشفير</button>
+            </div>
+            <label>النتيجة:</label>
+            <textarea id="morseOutput" readonly placeholder="النتيجة تظهر هنا..."></textarea>
+            <div class="footer-section">
+                <button class="copy-btn" onclick="copyMorseResult()">📋 نسخ النتيجة</button>
+                <button class="clear-btn" onclick="clearMorse()">🗑 مسح</button>
+                <div id="morseStatus" class="status-badge">جاهز</div>
+            </div>
+        </div>
+
+        <button class="logout-btn" onclick="logout()">🚪 تسجيل خروج</button>
+    </div>
+</div>
+
+<script>
+    // ========== بيانات تسجيل الدخول ==========
+    const validUsers = [
+        { username: "admin", password: "1234" },
+        { username: "user", password: "5678" },
+        { username: "pager", password: "pager123" }
+    ];
+
+    // ========== نظام تشفير البيجر ==========
+    const pagerLetters = ["ا","ب","ت","ث","ج","ح","خ","د","ذ","ر","ز","س","ش","ص","ض","ط","ظ","ع","غ","ف","ق","ك","ل","م","ن","ه","و","ي"];
+
+    function pagerEncode() {
+        let text = document.getElementById("pagerInput").value.trim();
+        if (!text) {
+            document.getElementById("pagerResult").innerHTML = '⚠️ أدخل نصاً أولاً<button class="copy-result-btn" onclick="copyPagerResult()">📋 نسخ</button>';
+            return;
+        }
+        let words = text.split(/\s+/);
+        let encodedResult = [];
+        for (let word of words) {
+            let wordNums = [];
+            for (let char of word) {
+                let index = pagerLetters.indexOf(char);
+                if (index !== -1) {
+                    wordNums.push(index + 1);
+                }
+            }
+            if (wordNums.length > 0) {
+                encodedResult.push(wordNums.join(" "));
+            }
+        }
+        let resultText = encodedResult.join(" - ") || "⚠️ لا توجد أحرف صالحة";
+        document.getElementById("pagerResult").innerHTML = resultText + '<button class="copy-result-btn" onclick="copyPagerResult()">📋 نسخ</button>';
+    }
+
+    function pagerDecode() {
+        let input = document.getElementById("pagerInput").value.trim();
+        if (!input) {
+            document.getElementById("pagerResult").innerHTML = '⚠️ أدخل أرقاماً أولاً<button class="copy-result-btn" onclick="copyPagerResult()">📋 نسخ</button>';
+            return;
+        }
+        let parts = input.split("-");
+        let sentence = [];
+        for (let part of parts) {
+            let nums = part.trim().split(/\s+/);
+            let word = "";
+            for (let n of nums) {
+                let i = parseInt(n);
+                if (!isNaN(i) && i >= 1 && i <= 28) {
+                    word += pagerLetters[i - 1];
+                }
+            }
+            if (word) sentence.push(word);
+        }
+        let resultText = sentence.join(" ") || "❌ خطأ في الصيغة";
+        document.getElementById("pagerResult").innerHTML = resultText + '<button class="copy-result-btn" onclick="copyPagerResult()">📋 نسخ</button>';
+    }
+
+    function copyPagerResult() {
+        let resultText = document.getElementById("pagerResult").innerText.replace("نسخ", "").trim();
+        if (resultText && resultText !== "---" && !resultText.includes("⚠️") && !resultText.includes("❌")) {
+            navigator.clipboard.writeText(resultText).then(() => {
+                updatePagerStatus("✅ تم النسخ!");
+            });
+        } else {
+            updatePagerStatus("❌ لا يوجد نص");
+        }
+    }
+
+    function updatePagerStatus(msg) {
+        let resultDiv = document.getElementById("pagerResult");
+        let originalText = resultDiv.innerText.replace("نسخ", "").trim();
+        resultDiv.innerHTML = originalText + '<button class="copy-result-btn" onclick="copyPagerResult()">📋 نسخ</button>';
+        let status = document.createElement("span");
+        status.style.position = "absolute";
+        status.style.right = "10px";
+        status.style.bottom = "-25px";
+        status.style.fontSize = "12px";
+        status.style.color = "#00ffaa";
+        status.innerText = msg;
+        resultDiv.appendChild(status);
+        setTimeout(() => status.remove(), 1500);
+    }
+
+    // ========== نظام المورس ==========
+    const morseAlphabet = {
+        'A': '.-', 'B': '-...', 'C': '-.-.', 'D': '-..', 'E': '.', 'F': '..-.', 'G': '--.', 'H': '....',
+        'I': '..', 'J': '.---', 'K': '-.-', 'L': '.-..', 'M': '--', 'N': '-.', 'O': '---', 'P': '.--.',
+        'Q': '--.-', 'R': '.-.', 'S': '...', 'T': '-', 'U': '..-', 'V': '...-', 'W': '.--', 'X': '-..-',
+        'Y': '-.--', 'Z': '--..', '1': '.----', '2': '..---', '3': '...--', '4': '....-', '5': '.....',
+        '6': '-....', '7': '--...', '8': '---..', '9': '----.', '0': '-----', ' ': '/',
+        'أ': '.-', 'ب': '-...', 'ت': '-', 'ث': '-.-.', 'ج': '.---', 'ح': '....', 'خ': '---', 'د': '-..',
+        'ذ': '--..', 'ر': '.-.', 'ز': '---.', 'س': '...', 'ش': '----', 'ص': '-..-', 'ض': '...-', 'ط': '..-',
+        'ظ': '-.--', 'ع': '.--.', 'غ': '--.', 'ف': '..-.', 'ق': '--.-', 'ك': '-.-', 'ل': '.-..', 'م': '--',
+        'ن': '-.', 'ه': '..', 'و': '.--', 'ي': '..---'
+    };
+
+    const reverseMorse = {};
+    for (let key in morseAlphabet) {
+        reverseMorse[morseAlphabet[key]] = key;
+    }
+
+    function convertToMorse() {
+        const input = document.getElementById('morseInput').value.toUpperCase();
+        if(!input) return updateMorseStatus("⚠️ أدخل نصاً أولاً");
+        let result = "";
+        for (let char of input) {
+            result += (morseAlphabet[char] || char) + " ";
+        }
+        document.getElementById('morseOutput').value = result.trim();
+        updateMorseStatus("✅ تم التحويل");
+    }
+
+    function decodeMorse() {
+        const input = document.getElementById('morseInput').value.trim();
+        if(!input) return updateMorseStatus("⚠️ أدخل كوداً أولاً");
+        const words = input.split(' ');
+        let result = "";
+        for (let code of words) {
+            if (reverseMorse[code]) {
+                result += reverseMorse[code];
+            } else if (code === "/") {
+                result += " ";
+            }
+        }
+        document.getElementById('morseOutput').value = result;
+        updateMorseStatus("✅ تم فك التشفير");
+    }
+
+    function copyMorseResult() {
+        const resultField = document.getElementById('morseOutput');
+        if (resultField.value) {
+            navigator.clipboard.writeText(resultField.value).then(() => {
+                updateMorseStatus("📋 تم النسخ!");
+            });
+        } else {
+            updateMorseStatus("❌ لا يوجد نص");
+        }
+    }
+
+    function clearMorse() {
+        document.getElementById('morseInput').value = "";
+        document.getElementById('morseOutput').value = "";
+        updateMorseStatus("🗑 تم المسح");
+    }
+
+    function updateMorseStatus(msg) {
+        const status = document.getElementById('morseStatus');
+        status.innerText = msg;
+        setTimeout(() => status.innerText = "جاهز", 2000);
+    }
+
+    // ========== وظائف التبويب ==========
+    function switchTab(tab) {
+        // تحديث أزرار التبويب
+        document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+        if (tab === 'pager') {
+            document.querySelector('.tab-btn:first-child').classList.add('active');
+            document.getElementById('pagerTab').classList.add('active');
+            document.getElementById('morseTab').classList.remove('active');
+        } else {
+            document.querySelector('.tab-btn:last-child').classList.add('active');
+            document.getElementById('morseTab').classList.add('active');
+            document.getElementById('pagerTab').classList.remove('active');
+        }
+    }
+
+    // ========== وظائف تسجيل الدخول ==========
+    function checkLogin() {
+        let username = document.getElementById("loginUsername").value.trim();
+        let password = document.getElementById("loginPassword").value.trim();
+        let isValid = false;
+
+        for (let user of validUsers) {
+            if (user.username === username && user.password === password) {
+                isValid = true;
+                break;
+            }
+        }
+
+        if (isValid) {
+            document.getElementById("loginScreen").style.display = "none";
+            document.getElementById("mainApp").style.display = "block";
+            document.getElementById("loginError").style.display = "none";
+            // مسح الحقول
+            document.getElementById("pagerInput").value = "";
+            document.getElementById("pagerResult").innerHTML = '---<button class="copy-result-btn" onclick="copyPagerResult()">📋 نسخ</button>';
+            document.getElementById("morseInput").value = "";
+            document.getElementById("morseOutput").value = "";
+        } else {
+            document.getElementById("loginError").style.display = "block";
+        }
+    }
+
+    function logout() {
+        document.getElementById("loginScreen").style.display = "block";
+        document.getElementById("mainApp").style.display = "none";
+        document.getElementById("loginUsername").value = "";
+        document.getElementById("loginPassword").value = "";
+        document.getElementById("loginError").style.display = "none";
+    }
+
+    // Enter key support
+    document.getElementById("loginPassword").addEventListener("keypress", function(e) {
+        if (e.key === "Enter") checkLogin();
+    });
+    document.getElementById("loginUsername").addEventListener("keypress", function(e) {
+        if (e.key === "Enter") checkLogin();
+    });
+</script>
+
+</body>
+</html>
