@@ -22,14 +22,14 @@
             padding: 20px;
         }
 
-        /* شاشة تسجيل الدخول */
+        /* شاشة تسجيل الدخول (بزر واحد فقط) */
         .login-screen {
             background: rgba(20, 10, 35, 0.95);
             backdrop-filter: blur(12px);
             border-radius: 32px;
-            padding: 35px 25px;
+            padding: 45px 35px;
             width: 100%;
-            max-width: 380px;
+            max-width: 400px;
             text-align: center;
             border: 1px solid rgba(156, 78, 221, 0.4);
             box-shadow: 0 20px 40px rgba(0,0,0,0.5), 0 0 20px rgba(156,78,221,0.2);
@@ -39,53 +39,33 @@
             background: linear-gradient(135deg, #c084fc, #a855f7);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            font-size: 28px;
-            margin-bottom: 25px;
+            font-size: 32px;
+            margin-bottom: 15px;
         }
 
-        .login-screen input {
-            width: 100%;
-            padding: 14px;
-            margin: 10px 0;
-            background: rgba(255,255,255,0.08);
-            border: 1px solid rgba(156,78,221,0.3);
-            border-radius: 16px;
-            color: white;
-            font-size: 16px;
-            text-align: center;
-            transition: 0.3s;
-        }
-
-        .login-screen input:focus {
-            outline: none;
-            border-color: #a855f7;
-            box-shadow: 0 0 10px rgba(168,85,247,0.3);
+        .login-screen p {
+            color: #aaa;
+            margin-bottom: 30px;
+            font-size: 14px;
         }
 
         .login-screen button {
             width: 100%;
-            padding: 14px;
-            margin-top: 20px;
+            padding: 16px;
             background: linear-gradient(135deg, #7c3aed, #a855f7);
             border: none;
-            border-radius: 16px;
+            border-radius: 20px;
             color: white;
-            font-size: 18px;
+            font-size: 22px;
             font-weight: bold;
             cursor: pointer;
             transition: 0.3s;
+            font-family: 'Cairo';
         }
 
         .login-screen button:hover {
             transform: scale(1.02);
-            box-shadow: 0 0 15px rgba(168,85,247,0.5);
-        }
-
-        .error-msg {
-            color: #f87171;
-            margin-top: 15px;
-            font-size: 14px;
-            display: none;
+            box-shadow: 0 0 20px rgba(168,85,247,0.5);
         }
 
         /* التطبيق الرئيسي */
@@ -297,13 +277,11 @@
 </head>
 <body>
 
-<!-- شاشة تسجيل الدخول -->
+<!-- شاشة تسجيل الدخول (بزر واحد فقط) -->
 <div id="loginScreen" class="login-screen">
     <h1>🔐 CipherPager</h1>
-    <input type="text" id="loginUsername" placeholder="👤 اسم المستخدم">
-    <input type="password" id="loginPassword" placeholder="🔑 كلمة المرور">
-    <button onclick="doLogin()">دخول</button>
-    <div id="loginErrorMsg" class="error-msg">❌ اسم المستخدم أو كلمة المرور غير صحيحة</div>
+    <p>النظام المتكامل لتشفير البيجر وشيفرة مورس</p>
+    <button onclick="doLogin()">🚪 اضغط للدخول إلى النظام</button>
 </div>
 
 <!-- التطبيق الرئيسي -->
@@ -358,15 +336,6 @@
 </div>
 
 <script>
-    // ============================================
-    // بيانات تسجيل الدخول
-    // ============================================
-    const validUsers = [
-        { username: "admin", password: "1234" },
-        { username: "user", password: "5678" },
-        { username: "pager", password: "pager123" }
-    ];
-
     // ============================================
     // نظام البيجر - تحويل الحروف ↔ أرقام (بدون مسافات)
     // ============================================
@@ -536,36 +505,22 @@
         }
     }
 
+    // تسجيل الدخول (بدون اسم مستخدم أو كلمة مرور)
     function doLogin() {
-        let username = document.getElementById('loginUsername').value.trim();
-        let password = document.getElementById('loginPassword').value.trim();
-        let isValid = validUsers.some(user => user.username === username && user.password === password);
-        
-        if (isValid) {
-            document.getElementById('loginScreen').style.display = 'none';
-            document.getElementById('mainApp').style.display = 'block';
-            document.getElementById('loginErrorMsg').style.display = 'none';
-        } else {
-            document.getElementById('loginErrorMsg').style.display = 'block';
-        }
+        document.getElementById('loginScreen').style.display = 'none';
+        document.getElementById('mainApp').style.display = 'block';
     }
 
+    // تسجيل الخروج
     function logout() {
         document.getElementById('loginScreen').style.display = 'block';
         document.getElementById('mainApp').style.display = 'none';
-        document.getElementById('loginUsername').value = '';
-        document.getElementById('loginPassword').value = '';
-        document.getElementById('loginErrorMsg').style.display = 'none';
+        // مسح جميع الحقول عند الخروج
         document.getElementById('pagerInput').value = '';
         document.getElementById('pagerResult').innerHTML = '---<button class="copy-icon" onclick="copyPagerResult()">📋 نسخ</button>';
         document.getElementById('morseInput').value = '';
         document.getElementById('morseOutput').value = '';
     }
-
-    // دعم زر Enter في تسجيل الدخول
-    document.getElementById('loginPassword').addEventListener('keypress', function(e) {
-        if (e.key === 'Enter') doLogin();
-    });
 </script>
 
 </body>
